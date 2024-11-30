@@ -30,9 +30,25 @@ for arg in "$@"; do
       echo -n "$roll "
       sum=$((sum + roll))
     done
-
     echo "(sum: $sum)"
     total_sum=$((total_sum + sum))
+
+  # If argument is in the format AdY (Advantage rolls; e.g., Ad8)
+  elif [[ $arg =~ ^Ad([0-9]+)$ ]]; then
+    sides=${BASH_REMATCH[1]}
+    # Roll the dice and calculate the sum
+    echo -n "Advantage d""$sides rolls: "
+    sum=0
+    for ((i = 1; i <= 2; i++)); do
+      roll=$(roll_die "$sides")
+      echo -n "$roll "
+      if [[ $sum -lt $roll ]]; then
+        sum=$roll
+      fi
+    done
+    echo "(sum: $sum)"
+    total_sum=$((total_sum + sum))
+
   else
     echo "Invalid format: $arg"
   fi
